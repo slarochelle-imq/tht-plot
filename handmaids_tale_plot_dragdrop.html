@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The Handmaid's Tale – Dramatic Plot Structure (Drag & Drop)</title>
+<style>
+  :root{
+    --bg:#f7f8fb; --panel:#fff; --text:#222; --muted:#667;
+    --card:#eef3ff; --card-border:#8aa3ff;
+    --primary:#4a6cff; --primary-dark:#3e57cc;
+    --ok:#d4ffd4; --ok-border:#2e9b2e;
+    --bad:#ffe1e1; --bad-border:#c74a4a;
+  }
+  html, body { margin:0; background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; }
+  header { padding:18px 20px 10px; }
+  h1 { margin:0 0 8px; }
+  .sub { color:var(--muted); }
+  .wrap { padding:0 20px 24px; }
+  .controls { display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 16px; }
+  button { background:var(--primary); color:#fff; border:none; border-radius:8px; padding:10px 14px; font-size:15px; cursor:pointer; }
+  button:hover{ background:var(--primary-dark); }
+  button.secondary { background:#e6e9f7; color:#1f2a5c; }
+  button.secondary:hover { background:#d6daf3; }
+  .grid { display:grid; gap:16px; }
+  @media(min-width:1100px){ .grid { grid-template-columns: repeat(3, 1fr); } }
+  @media(min-width:1500px){ .grid { grid-template-columns: repeat(6, 1fr); } }
+
+  .panel { background:var(--panel); border-radius:12px; box-shadow:0 1px 6px rgba(0,0,0,.08); padding:14px; }
+  .panel h2 { margin:0 0 6px; font-size:1.05rem; }
+  .panel .hint { color:var(--muted); font-size:.92rem; margin-bottom:10px; }
+  .slots { display:grid; gap:8px; }
+  .slot {
+    border:2px dashed #9aa; min-height:54px; border-radius:10px; padding:8px;
+    display:flex; align-items:center; justify-content:flex-start; background:#fafbff; position:relative;
+  }
+  .slot .num { position:absolute; top:-10px; left:10px; background:#fff; border:1px solid #9aa; border-radius:12px; padding:1px 8px; font-size:12px; color:#445; }
+  .slot.highlight{ border-color:var(--primary); background:#f1f4ff; }
+  .slot.ok{ background:var(--ok); border-color:var(--ok-border);}
+  .slot.bad{ background:var(--bad); border-color:var(--bad-border);}
+
+  /* Pool as responsive grid for better readability */
+  .pool {
+    display:grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap:10px; align-items:start; padding:10px;
+    background:#fafbff; border:2px dashed #9aa; border-radius:10px;
+  }
+  .pool-title { margin:0 0 6px; font-weight:600; }
+  .pool-tip { color:var(--muted); margin:0 0 10px; font-size:.92rem; }
+
+  .card{
+    background:var(--card); border:1px solid var(--card-border); border-radius:10px;
+    padding:10px 12px; cursor:grab; user-select:none; line-height:1.25; font-size:15px;
+    display:flex; gap:8px; align-items:flex-start;
+  }
+  .card:active{ cursor:grabbing; }
+  .card .tag{
+    display:inline-block; flex:0 0 auto;
+    font-weight:700; color:#1f2a5c; background:#e6e9f7; border:1px solid #cfd6ff;
+    border-radius:8px; padding:2px 6px; font-size:12px; line-height:1.2;
+  }
+  .card .text{ flex:1 1 auto; }
+
+  .feedback { margin-top:8px; font-weight:700; }
+  .feedback.ok { color:#1b7a1b; }
+  .feedback.no { color:#9b2c2c; }
+
+  .note { color:var(--muted); font-size:.92rem; margin-top:8px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>The Handmaid’s Tale – Dramatic Plot Structure</h1>
+  <p class="sub">Drag each event into the correct element of the dramatic plot structure and place it in order within that element.</p>
+  <div class="controls">
+    <button onclick="checkAll()">Check</button>
+    <button class="secondary" onclick="resetAll(true)">Reset & Shuffle</button>
+    <button class="secondary" onclick="resetAll(false)">Reset (keep order)</button>
+    <button onclick="showAnswer()">Show Answer</button>
+    <button class="secondary" onclick="toggleTags()">Toggle tags</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <!-- Card Pool -->
+  <section class="panel">
+    <p class="pool-title">Card Pool</p>
+    <p class="pool-tip">Drag from here to the six structure columns. Drop a card back here to remove it from a slot.</p>
+    <div id="pool" class="pool" ondragover="allowDrop(event)" ondragleave="clearHighlight(event)" ondrop="dropTo(event)">
+      <!-- cards will be injected by script -->
+    </div>
+  </section>
+
+  <!-- Six structure columns -->
+  <section class="grid">
+    <div class="panel">
+      <h2>Exposition</h2>
+      <div class="hint">Set-up: world, context, protagonist, and status quo. (Place 3 items in order)</div>
+      <div class="slots">
+        <div id="EXP_1" class="slot" ondragover="allowDrop(event)" ondragleave="clearHighlight(event)" ondrop="dropTo(event)"><span class="num">1</span></div>
+        <div id="EXP_2" class="slot" ondragover="allowDrop(event)" ondragleave="clearHighlight(event)" ondrop="dropTo(event)"><span class="num">2</span></div>
+        <div id="EXP_3" class="slot" ondragover="allowDrop(event)" ondragleave="clearHighlight(event)" ondrop="dropTo(event)"><span class="num">3</span></div>
+      </div>
+      <div id="fb_EXP" class="feedback"></div>
+    </div>
+
+    <div class="panel">
+      <h2>Inciting Incident</h2>
+      <div class="hint">The event that disrupts the status quo and sets the plot in motion. (1 item)</div>
+      <div class="slots">
+        <div id="INC_1" class="slot" ondragover="allowDrop(event)" ondragleave="clearHighlight(event)" ondrop="dropTo(event)"><span class="num">1</span></div>
+      </div>
+      <div id="fb_INC" class="feedback"></div>
+    </div>
+
+    <div class="panel">
+      <h2>Rising Action</h2>
+      <div class="hint">Complications, obstacles, and escalations that increase tension. (Place 5 items in order)</div>
+      <div class="slots">
+        <div id="RA_1" class="slot" ondragover="allowDrop(event)" ondragleave="clearHighlight(event)" ondrop="dropTo(event)"><span class="num">1</span></div>
+        <div id="RA_2" class="slot" ondragover="allowDrop(event)" ondragleave="clearHighlight(event)" ondrop="dropTo(event)"><span class="num">2</span></div>
+        <div id="RA_3" class="slot" ondragover="allowDrop(event)" ondragleave="clearHighlight(event)" ondrop="dropTo(event)"><span class="num">3</span></div>
+        <div id="RA_4" class="slot" ondragover="allowDrop(event)" ondragleave="clearHighlight(event)" ondrop="dropTo(event)"><span class="num">4</span></div>
+        <div id="RA_5" class="slot" ondragover="allowDrop(event)" ondragleave="clearHighlight(event)" ondrop="dropTo(event)"><span class="num">5</span></div>
+      </div>
+      <div id="fb_RA" class="feedback"></div>
+    </div>
+
+    <div class="panel">
+      <h2>Climax</h2>
+      <div class="hint">Peak of conflict and turning point. (1 item)</div>
+      <div class="slots">
+        <div id="CL_1" class="slot" ondragover="allowDrop(event)" ondragleave="clearHighlight(event)" ondrop="dropTo(event)"><span class="num">1</span></div>
+      </div>
+      <div id="fb_CL" class="feedback"></div>
+    </div>
+
+    <div class="panel">
+      <h2>Falling Action</h2>
+      <div class="hint">Consequences of the climax; momentum shifts. (Place 3 items in order)</div>
+      <div class="slots">
+        <div id="FA_1" class="slot" ondragover="allowDrop(event)" ondragleave="clearHighlight(event)" ondrop="dropTo(event)"><span class="num">1</span></div>
+        <div id="FA_2" class="slot" ondragover="allowDrop(event)" ondragleave="clearHighlight(event)" ondrop="dropTo(event)"><span class="num">2</span></div>
+        <div id="FA_3" class="slot" ondragover="allowDrop(event)" ondragleave="clearHighlight(event)" ondrop="dropTo(event)"><span class="num">3</span></div>
+      </div>
+      <div id="fb_FA" class="feedback"></div>
+    </div>
+
+    <div class="panel">
+      <h2>Resolution / Denouement</h2>
+      <div class="hint">Final state; loose ends and new equilibrium. (Place 2 items in order)</div>
+      <div class="slots">
+        <div id="RES_1" class="slot" ondragover="allowDrop(event)" ondragleave="clearHighlight(event)" ondrop="dropTo(event)"><span class="num">1</span></div>
+        <div id="RES_2" class="slot" ondragover="allowDrop(event)" ondragleave="clearHighlight(event)" ondrop="dropTo(event)"><span class="num">2</span></div>
+      </div>
+      <div id="fb_RES" class="feedback"></div>
+    </div>
+  </section>
+
+  <p class="note">Tip: Long-press on touch screens to drag. You can edit card texts in the <code>items</code> list below to fit your edition or classroom focus.</p>
+</div>
+
+<script>
+/* =======================
+   Data (customizable)
+   ======================= */
+const items = [
+  // Exposition (3)
+  {id:"A", cat:"EXP", pos:1, text:"Offred narrates life under Gilead, a theocratic regime controlling women’s bodies and roles."},
+  {id:"B", cat:"EXP", pos:2, text:"We learn Handmaids’ purpose (reproduction), Offred’s status in the Commander’s household, and daily restrictions."},
+  {id:"C", cat:"EXP", pos:3, text:"Glimpses of the past: Offred’s family before Gilead, her daughter, and the loss of rights as the state restructured society."},
+
+  // Inciting Incident (1)
+  {id:"D", cat:"INC", pos:1, text:"The Commander unexpectedly summons Offred to his study for secret meetings, breaking rigid social rules."},
+
+  // Rising Action (5)
+  {id:"E", cat:"RA", pos:1, text:"Their illicit Scrabble sessions and small talk blur boundaries; Offred gains risky access and minor privileges."},
+  {id:"F", cat:"RA", pos:2, text:"Serena Joy proposes Offred sleep with Nick to get pregnant; Offred begins a covert relationship with him."},
+  {id:"G", cat:"RA", pos:3, text:"Offred learns fragments about Mayday (resistance) and about the Commanders’ hypocrisy from Ofglen and the Commander."},
+  {id:"H", cat:"RA", pos:4, text:"A forbidden outing to Jezebel’s exposes secret power networks and the regime’s double standards."},
+  {id:"I", cat:"RA", pos:5, text:"Surveillance anxiety grows; Ofglen’s situation changes suddenly, heightening the sense of danger."},
+
+  // Climax (1)
+  {id:"J", cat:"CL", pos:1, text:"A black van arrives for Offred; uncertain whether Eyes or Mayday, she must decide whether to go or resist."},
+
+  // Falling Action (3)
+  {id:"K", cat:"FA", pos:1, text:"Nick urges Offred to trust the men and go; Serena Joy and the household cannot stop the removal."},
+  {id:"L", cat:"FA", pos:2, text:"Offred leaves with the men, suspended between capture and rescue; her fate is ambiguous."},
+  {id:"M", cat:"FA", pos:3, text:"The narrative closes on Offred’s interior resolve as she steps into the unknown."},
+
+  // Resolution / Denouement (2)
+  {id:"N", cat:"RES", pos:1, text:"“Historical Notes” years later: scholars analyze Gilead’s records, reframing Offred’s account as an artifact."},
+  {id:"O", cat:"RES", pos:2, text:"The epilogue reveals the regime’s eventual fall and the limits of the archive, complicating truth and authority."}
+];
+
+/* Build answer map: e.g., "EXP_1" -> "item_A" */
+const answerMap = {};
+items.forEach(it => { answerMap[`${it.cat}_${it.pos}`] = `item_${it.id}`; });
+
+/* ----- Obfuscated (random) visible tags so labels don't reveal answers ----- */
+let tagsVisible = true;
+function shuffledLetters() {
+  const letters = 'ABCDEFGHJKLMNPQRSTUVWXYZ'.split(''); // (no I/O confusing)
+  // If more cards than letters, we’ll reuse with suffixes
+  return letters;
+}
+function makeObfuscatedMap() {
+  const map = {};
+  const base = shuffledLetters();
+  // Shuffle base letters
+  for (let i = base.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [base[i], base[j]] = [base[j], base[i]];
+  }
+  // Assign tags in random order; if we run out, reuse with a dot
+  let idx = 0, reuse = 0;
+  items.forEach(it => {
+    if (idx >= base.length) { idx = 0; reuse++; }
+    map[it.id] = reuse ? `${base[idx]}.${reuse}` : base[idx];
+    idx++;
+  });
+  return map;
+}
+let obfTagMap = makeObfuscatedMap();
+
+/* ============ Drag & Drop ============ */
+function allowDrop(ev){
+  ev.preventDefault();
+  const el = ev.currentTarget;
+  if(el.classList.contains('slot')) el.classList.add('highlight');
+}
+function clearHighlight(ev){
+  const el = ev.currentTarget;
+  if(el.classList.contains('slot')) el.classList.remove('highlight');
+}
+function drag(ev){ ev.dataTransfer.setData("text/plain", ev.currentTarget.id); }
+function dropTo(ev){
+  ev.preventDefault();
+  const target = ev.currentTarget;
+  const id = ev.dataTransfer.getData("text/plain");
+  const card = document.getElementById(id);
+  if(!card) return;
+
+  if(target.classList.contains('slot')){
+    target.classList.remove('highlight');
+    // If slot already has a card, send it back to pool (swap)
+    const existing = Array.from(target.children).find(n => n.classList && n.classList.contains('card'));
+    if(existing){ document.getElementById('pool').appendChild(existing); }
+  }
+  target.appendChild(card);
+}
+
+/* ============ Build UI ============ */
+function createCard(it){
+  const d = document.createElement('div');
+  d.id = `item_${it.id}`;
+  d.className = 'card';
+  d.draggable = true;
+  d.ondragstart = drag;
+  d.setAttribute('data-cat', it.cat);
+  d.setAttribute('data-pos', it.pos);
+
+  const tag = document.createElement('span');
+  tag.className = 'tag';
+  tag.textContent = obfTagMap[it.id] || '';
+  tag.style.display = tagsVisible ? 'inline-block' : 'none';
+
+  const text = document.createElement('span');
+  text.className = 'text';
+  text.textContent = it.text;
+
+  d.appendChild(tag);
+  d.appendChild(text);
+  return d;
+}
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]]=[arr[j],arr[i]];
+  }
+  return arr;
+}
+function populatePool(shuffleIt=true){
+  const pool = document.getElementById('pool');
+
+  // Move any cards from slots back to pool and reset slot classes
+  document.querySelectorAll('.slot').forEach(slot=>{
+    const card = slot.querySelector('.card');
+    if(card) pool.appendChild(card);
+    slot.classList.remove('ok','bad','highlight');
+  });
+
+  // Clear feedbacks
+  ['EXP','INC','RA','CL','FA','RES'].forEach(prefix=>{
+    const fb = document.getElementById(`fb_${prefix}`);
+    if(fb){ fb.textContent=''; fb.className='feedback'; }
+  });
+
+  // Rebuild tag map each reset & shuffle for fresh obfuscation
+  if (shuffleIt) obfTagMap = makeObfuscatedMap();
+
+  // Add cards
+  const cards = items.map(createCard);
+  const order = shuffleIt ? shuffle(cards) : cards;
+  pool.innerHTML = '';
+  order.forEach(c => pool.appendChild(c));
+}
+
+/* ============ Checking ============ */
+function checkColumn(prefix, total){
+  let correct = true, filled = true;
+  for(let i=1;i<=total;i++){
+    const slot = document.getElementById(`${prefix}_${i}`);
+    slot.classList.remove('ok','bad','highlight');
+    const expected = answerMap[`${prefix}_${i}`];
+    const card = slot.querySelector('.card');
+    if(!card){ filled = false; correct = false; continue; }
+    if(card.id === expected){ slot.classList.add('ok'); }
+    else { slot.classList.add('bad'); correct = false; }
+  }
+  const fb = document.getElementById(`fb_${prefix}`);
+  if(!fb) return correct;
+  if(!filled){
+    fb.textContent = "⚠ Some slots are empty in this section.";
+    fb.className = "feedback no";
+  } else if(correct){
+    fb.textContent = "✔ Great! This section is correct.";
+    fb.className = "feedback ok";
+  } else {
+    fb.textContent = "✘ Some items are misplaced or out of order.";
+    fb.className = "feedback no";
+  }
+  return correct;
+}
+function checkAll(){
+  const okEXP = checkColumn('EXP',3);
+  const okINC = checkColumn('INC',1);
+  const okRA  = checkColumn('RA',5);
+  const okCL  = checkColumn('CL',1);
+  const okFA  = checkColumn('FA',3);
+  const okRES = checkColumn('RES',2);
+  if(okEXP && okINC && okRA && okCL && okFA && okRES){
+    alert('🎉 Excellent! All sections are correct.');
+  }
+}
+function resetAll(shuffleIt=true){
+  populatePool(shuffleIt);
+}
+function showAnswer(){
+  populatePool(false);
+  Object.entries(answerMap).forEach(([slotId, cardId])=>{
+    const slot = document.getElementById(slotId);
+    const card = document.getElementById(cardId);
+    if(slot && card) slot.appendChild(card);
+  });
+  checkAll();
+}
+function toggleTags(){
+  tagsVisible = !tagsVisible;
+  document.querySelectorAll('.card .tag').forEach(tag=>{
+    tag.style.display = tagsVisible ? 'inline-block' : 'none';
+  });
+}
+
+/* Init */
+window.addEventListener('DOMContentLoaded', ()=> populatePool(true));
+</script>
+
+</body>
+</html>
